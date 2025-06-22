@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Staff Guide | CS Server</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        :root {
+            --bg-primary: #02040a;
+            --bg-secondary: #0d1117;
+            --border-color: rgba(255, 255, 255, 0.1);
+            --text-primary: #e6edf3;
+            --text-secondary: #848d97;
+            --accent-1: #388bfd;
+            --accent-2: #e3b341;
+            --accent-3: #f85149;
+            --gradient-start: #58a6ff;
+            --gradient-end: #a371f7;
+            --font-main: 'Inter', sans-serif;
+            --trial-blue: #38bdf8;
+            --mod-blue: #60a5fa;
+            --admin-blue: #3b82f6;
+        }
+        body { background-color: var(--bg-primary); color: var(--text-primary); font-family: var(--font-main); }
+        
+        /* --- Animated Backgrounds --- */
+        #login-bg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; background-color: #02040a; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Cg fill='%230d1117' fill-opacity='0.4'%3E%3Crect x='0' y='0' width='100' height='1'/%3E%3Crect x='0' y='0' width='1' height='100'/%3E%3C/g%3E%3C/svg%3E"); animation: pan-bg 60s linear infinite; }
+        @keyframes pan-bg { 0% { background-position: 0% 0%; } 100% { background-position: 100% 100%; } }
+        
+        .aurora-bg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -2; background: var(--bg-primary); overflow: hidden; }
+        .aurora-bg .aurora { position: absolute; width: 800px; height: 800px; background-image: radial-gradient(circle, var(--gradient-start), transparent 50%); border-radius: 50%; opacity: 0.1; animation: drift 40s infinite alternate linear; filter: blur(120px); }
+        .aurora.two { background-image: radial-gradient(circle, var(--accent-3), transparent 50%); animation-duration: 50s; bottom: -30%; right: -30%; }
+        @keyframes drift { 0% { transform: translate(-20%, -20%) rotate(0deg) scale(1); } 100% { transform: translate(20%, 20%) rotate(360deg) scale(1.2); } }
+
+        /* --- Login Screen --- */
+        #login-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 100; display: flex; align-items: center; justify-content: center; transition: opacity 0.5s ease-out, backdrop-filter 0.5s ease-out; }
+        #login-card { animation: float-in 1s ease-out forwards; }
+        @keyframes float-in { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* --- Main Content --- */
+        #main-content { display: none; opacity: 0; transition: opacity 0.8s ease-in; }
+        .page { display: none; }
+        .page.active { display: block; animation: pageFadeIn 0.6s ease-out; }
+        @keyframes pageFadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+
+        .nav-link { position: relative; cursor: pointer; color: var(--text-secondary); padding: 0.5rem 0; font-weight: 500; transition: color 0.3s ease; }
+        .nav-link::after { content: ''; position: absolute; width: 0; height: 2px; bottom: 0; left: 50%; transform: translateX(-50%); background: linear-gradient(90deg, var(--gradient-start), var(--gradient-end)); transition: all 0.3s ease; }
+        .nav-link:hover { color: var(--text-primary); }
+        .nav-link.active { color: var(--text-primary); font-weight: 600; }
+        .nav-link.active::after { width: 100%; }
+        
+        /* --- Modern Card Design --- */
+        .modern-card {
+            background-color: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 1rem;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .modern-card::before {
+            content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+            border-radius: inherit; border: 1px solid transparent;
+            background: linear-gradient(120deg, var(--gradient-start), var(--gradient-end)) border-box;
+            -webkit-mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: destination-out; mask-composite: exclude;
+            opacity: 0; transition: opacity 0.3s ease;
+        }
+        .modern-card:hover { transform: translateY(-5px); box-shadow: 0 10px 30px rgba(0,0,0,0.2), 0 0 20px rgba(88, 166, 255, 0.2); }
+        .modern-card:hover::before { opacity: 1; }
+        
+        .live-gradient-text {
+            background-size: 200% 200%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: gradient-animation 5s ease infinite;
+        }
+        @keyframes gradient-animation { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+
+        /* --- Feature Styles --- */
+        .copy-btn { background: var(--bg-primary); border: 1px solid var(--border-color); color: var(--text-secondary); width: 2.5rem; height: 2.5rem; border-radius: 0.5rem; cursor: pointer; transition: all 0.2s ease; }
+        .copy-btn:hover { color: var(--text-primary); border-color: var(--accent-1); }
+        .scenario-option { transition: all 0.2s ease; border: 1px solid var(--border-color); }
+        .scenario-option.correct { background-color: rgba(4, 120, 87, 0.3); border-color: rgba(16, 185, 129, 0.5); }
+        .scenario-option.incorrect { background-color: rgba(153, 27, 27, 0.3); border-color: rgba(239, 68, 68, 0.5); }
+        .progress-bar-container { background-color: var(--bg-primary); border-radius: 99px; overflow: hidden; }
+        .progress-bar { background: linear-gradient(90deg, var(--gradient-start), var(--gradient-end)); transition: width 0.5s ease-out; }
+    </style>
+</head>
+<body>
+    <div id="login-bg"></div>
+    <div class="aurora-bg"><div class="aurora one"></div><div class="aurora two"></div></div>
+    
+    <div id="login-overlay">
+        <div id="login-card" class="w-full max-w-sm p-8 space-y-6 bg-black/50 backdrop-blur-2xl rounded-2xl shadow-2xl border border-gray-700 text-center">
+            <svg class="mx-auto h-16 w-16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <defs><linearGradient id="iconGradient" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:var(--gradient-start);" /><stop offset="100%" style="stop-color:var(--gradient-end);"/></linearGradient></defs>
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" stroke="url(#iconGradient)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+                <circle cx="12" cy="12" r="3" stroke="url(#iconGradient)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></circle>
+            </svg>
+            <h1 class="text-3xl font-bold mt-4">Staff Network</h1>
+            <p class="text-gray-400">Authentication Required</p>
+            <form id="login-form" class="space-y-4 pt-4">
+                <input id="username" type="text" placeholder="Username" class="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all">
+                <input id="password" type="password" placeholder="Password" class="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all">
+                <button type="submit" class="w-full px-4 py-3 font-bold text-white bg-gradient-to-r from-[var(--gradient-start)] to-[var(--gradient-end)] rounded-md hover:opacity-90 transition-opacity transform hover:scale-105">ACCESS GUIDE</button>
+            </form>
+            <p id="login-error" class="text-red-500 text-sm text-center hidden pt-2">Invalid username or password.</p>
+        </div>
+    </div>
+
+    <div id="main-content">
+        <header class="sticky top-0 z-40 bg-black/30 backdrop-blur-lg border-b border-white/10">
+            <nav class="container mx-auto flex justify-between items-center p-4">
+                <div class="text-xl font-bold tracking-wider">STAFF GUIDE</div>
+                <div class="hidden md:flex items-center space-x-8 text-sm">
+                    <a class="nav-link active" data-page="home">Home</a>
+                    <a class="nav-link" data-page="onboarding">Onboarding</a>
+                    <a class="nav-link" data-page="rules">Rules & Tips</a>
+                    <a class="nav-link" data-page="commands">Commands</a>
+                    <a class="nav-link" data-page="infractions">Infractions</a>
+                </div>
+                 <button id="mobile-menu-button" class="md:hidden text-2xl"><i class="fas fa-bars"></i></button>
+            </nav>
+            <div id="mobile-menu" class="hidden md:hidden bg-black/80 p-4"><ul class="flex flex-col space-y-2"><a class="nav-link active text-center" data-page="home">Home</a><a class="nav-link text-center" data-page="onboarding">Onboarding</a><a class="nav-link text-center" data-page="rules">Rules & Tips</a><a class="nav-link text-center" data-page="commands">Commands</a><a class="nav-link text-center" data-page="infractions">Infractions</a></ul></div>
+        </header>
+
+        <main id="main-container" class="container mx-auto p-4 md:p-8">
+            <!-- Pages will be injected here by JS -->
+        </main>
+    </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const pageContent = {
+        home: `
+            <section class="text-center py-16">
+                <h1 class="text-5xl md:text-6xl font-extrabold tracking-tight live-gradient-text" style="background-image: linear-gradient(45deg, #58a6ff, #a371f7, #e3416f)">Staff Headquarters</h1>
+                <p class="text-xl text-gray-400 max-w-3xl mx-auto mt-4">From Vision to Value: Your central resource for all staff procedures and guidelines.</p>
+            </section>
+            <section class="modern-card p-8 searchable">
+                <div class="p-2">
+                    <h2 class="text-2xl font-bold mb-4 flex items-center gap-3"><i class="fa-solid fa-scroll text-blue-300"></i>Our Core Philosophy</h2>
+                    <div class="text-gray-300 leading-relaxed space-y-4">
+                        <p>As members of the Staff Team, our <strong class="font-bold text-blue-400">ACTIONS</strong> and <strong class="font-bold text-blue-400">WORDS</strong> represent the image of the Server. Hence, it is <strong class="font-bold text-blue-400">VERY IMPORTANT</strong> to always show the <strong class="font-bold text-blue-400">RIGHT EXAMPLE</strong> and the <strong class="font-bold text-blue-400">BEST SIDE OF OURSELVES</strong> when interacting with <strong class="font-bold text-blue-400">EVERY</strong> other Members, whoever they are <strong class="font-bold text-blue-400">AND</strong> the behaviour they have.</p>
+                        <p>Those rules have been made as a reminder of the <strong class="font-bold text-blue-400">responsibilities</strong> that comes with your role in the Community. <strong class="font-bold text-blue-400">You should always keep them in mind</strong> when interacting with anyone while being under the colors of the Server Staff.</p>
+                    </div>
+                </div>
+            </section>
+        `,
+        onboarding: `
+            <header class="text-center py-12"><h1 class="text-4xl font-bold live-gradient-text" style="background-image: linear-gradient(45deg, #2dd4bf, #38bdf8, #818cf8)">New Staff Onboarding</h1></header>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <div class="modern-card p-6 searchable">
+                    <h3 class="font-bold text-xl mb-2 p-2"><i class="fa-solid fa-list-check mr-2 text-teal-300"></i>Interactive Scenario Trainer</h3>
+                    <div class="progress-bar-container w-full h-2.5 mb-4 mx-2"><div id="scenario-progress" class="progress-bar h-2.5" style="width: 0%"></div></div>
+                    <div id="scenario-container" class="bg-primary/50 p-4 rounded-lg space-y-4 min-h-[250px]">
+                        <!-- Scenarios will be loaded here by JS -->
+                    </div>
+                    <div id="scenario-nav" class="mt-4 p-2 flex flex-wrap gap-2"></div>
+                </div>
+                <div class="modern-card p-6 searchable">
+                     <h3 class="font-bold text-xl mb-4 p-2"><i class="fa-solid fa-book-sparkles mr-2 text-teal-300"></i>Key Terminologies</h3>
+                    <ul class="space-y-4 text-sm">
+                        <li class="flex items-start gap-3"><i class="fa-solid fa-code text-gray-400 mt-1 w-5 text-center"></i><div><strong>Developer Mode:</strong> A Discord setting required to copy User IDs for bot commands.</div></li>
+                        <li class="flex items-start gap-3"><i class="fa-solid fa-shield-halved text-gray-400 mt-1 w-5 text-center"></i><div><strong>2FA (2-Factor):</strong> Mandatory account security for staff permissions.</div></li>
+                        <li class="flex items-start gap-3"><i class="fa-solid fa-flag text-gray-400 mt-1 w-5 text-center"></i><div><strong>Flagging:</strong> Using \`--silent\` to create a record of behavior without notifying the user.</div></li>
+                        <li class="flex items-start gap-3"><i class="fa-solid fa-user-slash text-gray-400 mt-1 w-5 text-center"></i><div><strong>Softban:</strong> Kicks a user and deletes their recent messages. Good for cleanup.</div></li>
+                        <li class="flex items-start gap-3"><i class="fa-solid fa-ghost text-gray-400 mt-1 w-5 text-center"></i><div><strong>Forceban:</strong> Bans a user not in the server, by using their ID.</div></li>
+                         <li class="flex items-start gap-3"><i class="fa-solid fa-envelope-open-text text-gray-400 mt-1 w-5 text-center"></i><div><strong>ModMail:</strong> The bot-based system for members to contact staff privately.</div></li>
+                         <li class="flex items-start gap-3"><i class="fa-solid fa-clock-rotate-left text-gray-400 mt-1 w-5 text-center"></i><div><strong>Audit Logs:</strong> A server log showing all admin actions. Viewable by Admins+.</div></li>
+                         <li class="flex items-start gap-3"><i class="fa-solid fa-stairs text-gray-400 mt-1 w-5 text-center"></i><div><strong>Scaling:</strong> The system where punishments increase in severity for repeat offenses within the same category.</div></li>
+                    </ul>
+                </div>
+            </div>
+             <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mt-8">
+                <div class="modern-card p-6 searchable">
+                    <h3 class="font-bold text-xl mb-4 p-2"><i class="fa-solid fa-triangle-exclamation mr-2 text-yellow-300"></i>Common Pitfalls</h3>
+                    <ul class="space-y-4 text-sm">
+                        <li class="flex items-start gap-3"><i class="fa-solid fa-bolt text-gray-400 mt-1 w-5 text-center"></i><div><strong>Acting on Impulse:</strong> Never punish without certainty. Always gather evidence (screenshots, logs) before taking action. When in doubt, ask.</div></li>
+                        <li class="flex items-start gap-3"><i class="fa-solid fa-comment-dots text-gray-400 mt-1 w-5 text-center"></i><div><strong>Vague Reasons:</strong> Always be specific in your punishment reasons. "Spamming emotes in #chat" is better than just "spam". This helps the user and other staff understand the situation.</div></li>
+                        <li class="flex items-start gap-3"><i class="fa-solid fa-users-slash text-gray-400 mt-1 w-5 text-center"></i><div><strong>Moderating in Isolation:</strong> Don't be afraid to use #need-admin or ask a senior mod for a second opinion. It's better to ask than to make a mistake.</div></li>
+                    </ul>
+                </div>
+                <div class="modern-card p-6 searchable">
+                    <h3 class="font-bold text-xl mb-4 p-2"><i class="fa-solid fa-microphone-lines mr-2 text-red-400"></i>Voice Chat Moderation</h3>
+                     <ul class="space-y-4 text-sm">
+                        <li class="flex items-start gap-3"><i class="fa-solid fa-volume-high text-gray-400 mt-1 w-5 text-center"></i><div><strong>Earrape/Mic Spam:</strong> This is a Medium offense. It's highly disruptive, so an immediate server mute via bot command is appropriate. Do not just use the manual VC mute.</div></li>
+                        <li class="flex items-start gap-3"><i class="fa-solid fa-fire-flame-curved text-gray-400 mt-1 w-5 text-center"></i><div><strong>Heated Arguments:</strong> If an argument becomes toxic, separate the users into different channels or move one out. Issue verbal warnings. If it continues, issue a Minor punishment for 'Starting Arguments'.</div></li>
+                        <li class="flex items-start gap-3"><i class="fa-solid fa-person-military-pointing text-gray-400 mt-1 w-5 text-center"></i><div><strong>Taking Control:</strong> As a staff member, you can move members between VCs and disconnect them. Use this to de-escalate situations or remove problematic users from a channel.</div></li>
+                    </ul>
+                </div>
+            </div>
+        `,
+        rules: `
+            <header class="text-center py-12"><h1 class="text-4xl font-bold live-gradient-text" style="background-image: linear-gradient(45deg, #a3e635, #34d399, #22d3ee)">Staff Rules & Important Tips</h1></header>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <div class="space-y-6">
+                    <h2 class="text-2xl font-bold border-b border-gray-700 pb-2 searchable flex items-center gap-3"><i class="fas fa-gavel"></i>General Conduct</h2>
+                    <div class="modern-card p-4 searchable flex items-start gap-4"><i class="fa-solid fa-scale-balanced text-green-400 mt-1 w-6 text-center"></i><div><strong>Do not break any server rules.</strong></div></div>
+                    <div class="modern-card p-4 searchable flex items-start gap-4"><i class="fa-solid fa-wand-magic-sparkles text-purple-400 mt-1 w-6 text-center"></i><div><strong>Do not abuse your powers.</strong><p class="text-sm text-gray-400">You are here to create arrangement, not chaos.</p></div></div>
+                    <div class="modern-card p-4 searchable flex items-start gap-4"><i class="fa-solid fa-heart-crack text-red-500 mt-1 w-6 text-center"></i><div><strong>No discriminatory jokes and hate speech.</strong><p class="text-sm text-gray-400">This applies even if you "mean it as a joke". It covers attacks based on race, ethnicity, origin, sex, gender, orientation, religion, or disabilities.</p></div></div>
+                    <div class="modern-card p-4 searchable flex items-start gap-4"><i class="fa-solid fa-comment-slash text-red-400 mt-1 w-6 text-center"></i><div><strong>No verbal abuse, insults, threats, or offensive content.</strong></div></div>
+                    <div class="modern-card p-4 searchable flex items-start gap-4"><i class="fa-solid fa-users text-blue-400 mt-1 w-6 text-center"></i><div><strong>Respect all other Staff members.</strong><p class="text-sm text-gray-400">Take strong disagreements to Super Admins or DMs.</p></div></div>
+                    <div class="modern-card p-4 searchable flex items-start gap-4"><i class="fa-solid fa-file-shield text-gray-400 mt-1 w-6 text-center"></i><div><strong>Do not share anything from Staff channels.</strong></div></div>
+                    <div class="modern-card p-4 searchable flex items-start gap-4"><i class="fa-solid fa-user-secret text-yellow-400 mt-1 w-6 text-center"></i><div><strong>Do not use your staff position for personal advantages.</strong></div></div>
+                </div>
+                <div class="space-y-6">
+                    <h2 class="text-2xl font-bold border-b border-gray-700 pb-2 searchable flex items-center gap-3"><i class="fas fa-lightbulb"></i>Moderation Tips</h2>
+                    <div class="modern-card p-4 searchable flex items-start gap-4"><i class="fa-solid fa-code text-blue-400 mt-1 w-6 text-center"></i><div><strong>Enable “Developer Mode”.</strong><p class="text-sm text-gray-400">You need it to get User IDs for commands.</p></div></div>
+                    <div class="modern-card p-4 searchable flex items-start gap-4"><i class="fa-solid fa-shield-halved text-green-400 mt-1 w-6 text-center"></i><div><strong>Activate 2-Factor Authentication (2FA).</strong></div></div>
+                    <div class="modern-card p-4 searchable flex items-start gap-4"><i class="fa-solid fa-flag text-red-400 mt-1 w-6 text-center"></i><div><strong>Report ToS violations to Discord.</strong><p class="text-sm text-gray-400">Use the form: <a href="https://dis.gd/report" class="font-bold text-blue-400" target="_blank">dis.gd/report</a></p></div></div>
+                    <div class="modern-card p-4 searchable flex items-start gap-4"><i class="fa-solid fa-bell text-yellow-400 mt-1 w-6 text-center"></i><div><strong>Notify users if bot DMs fail.</strong><p class="text-sm text-gray-400">If the bot says "user was NOT notified", you must ping them in chat.</p></div></div>
+                    <div class="modern-card p-4 searchable flex items-start gap-4"><i class="fa-solid fa-magnifying-glass text-purple-400 mt-1 w-6 text-center"></i><div><strong>Investigate users in ⁠#aperture-logs.</strong></div></div>
+                    <div class="modern-card p-4 searchable flex items-start gap-4"><i class="fa-solid fa-divide text-orange-400 mt-1 w-6 text-center"></i><div><strong>Divide reasons for multiple infractions.</strong><p class="text-sm text-gray-400">Example: \`!warn (id) Earrape / Breaking VC rules\`</p></div></div>
+                    <div class="modern-card p-4 searchable flex items-start gap-4"><i class="fa-solid fa-user-ninja text-gray-400 mt-1 w-6 text-center"></i><div><strong>Consult admins for kicks/bans.</strong><p class="text-sm text-gray-400">Use the #need-admin channel.</p></div></div>
+                </div>
+            </div>
+        `,
+        commands: `
+            <header class="text-center py-12"><h1 class="text-4xl font-bold live-gradient-text" style="background-image: linear-gradient(45deg, #f97316, #facc15, #fde047)">Permissions & Commands</h1></header>
+            <div class="space-y-12">
+                <div class="searchable">
+                    <h2 class="text-3xl font-bold mb-4 flex items-center gap-3" style="color: var(--trial-blue);"><i class="fa-solid fa-user-graduate"></i>@trial mod</h2>
+                    <p class="mb-4 text-gray-400">Access to: delete messages, change nicknames, move/disconnect members in VC, View ModMails.</p>
+                    <div class="modern-card p-4 space-y-3">
+                        <div class="command-card modern-card p-4 flex justify-between items-center"><code class="text-gray-300">!warn {User ID} &lt;reason&gt; <span class="text-gray-500 text-sm ml-2">| warns the user in DMs + adds an infraction</span></code><button class="copy-btn" data-command="!warn {User ID} <reason>"><i class="far fa-copy"></i></button></div>
+                        <div class="command-card modern-card p-4 flex justify-between items-center"><code class="text-gray-300">!warn {User ID} 🚩 | &lt;reason&gt; --silent <span class="text-gray-500 text-sm ml-2">| to flag a user who got reported</span></code><button class="copy-btn" data-command="!warn {User ID} 🚩 | <reason> --silent"><i class="far fa-copy"></i></button></div>
+                        <div class="command-card modern-card p-4 flex justify-between items-center"><code class="text-gray-300">!tempmute {User ID} {duration} &lt;reason&gt; <span class="text-gray-500 text-sm ml-2">| mutes the user + DM + Infraction</span></code><button class="copy-btn" data-command="!tempmute {User ID} {duration} <reason>"><i class="far fa-copy"></i></button></div>
+                        <div class="command-card modern-card p-4 flex justify-between items-center"><code class="text-gray-300">!inf search {User ID} <span class="text-gray-500 text-sm ml-2">| shows the user's previous infractions</span></code><button class="copy-btn" data-command="!inf search {User ID}"><i class="far fa-copy"></i></button></div>
+                        <div class="command-card modern-card p-4 flex justify-between items-center"><code class="text-gray-300">!info {User ID}</code><button class="copy-btn" data-command="!info {User ID}"><i class="far fa-copy"></i></button></div>
+                        <div class="command-card modern-card p-4 flex justify-between items-center"><code class="text-gray-300">!search {Username}</code><button class="copy-btn" data-command="!search {Username}"><i class="far fa-copy"></i></button></div>
+                        <div class="command-card modern-card p-4 flex justify-between items-center"><code class="text-gray-300">/voice-owner <span class="text-gray-500 text-sm ml-2">| to see who owns a temp VC</span></code><button class="copy-btn" data-command="/voice-owner"><i class="far fa-copy"></i></button></div>
+                    </div>
+                </div>
+                <div class="searchable">
+                    <h2 class="text-3xl font-bold mb-4 flex items-center gap-3" style="color: var(--mod-blue);"><i class="fa-solid fa-user-shield"></i>@moderator Adds:</h2>
+                    <p class="mb-4 text-gray-400">Access to: View log channels, Answer ModMails, Manual voice mutes.</p>
+                    <div class="modern-card p-4 space-y-3">
+                         <div class="command-card modern-card p-4 flex justify-between items-center"><code class="text-gray-300">!unmute {User ID}</code><button class="copy-btn" data-command="!unmute {User ID}"><i class="far fa-copy"></i></button></div>
+                         <div class="mt-4 border-t border-gray-700 pt-4"><p class="text-sm text-gray-400 mb-2">If Aperture is down, use Carl bot:</p>
+                            <div class="command-card modern-card p-4 flex justify-between items-center"><code class="text-gray-300">!!warn {User ID} &lt;reason&gt;</code><button class="copy-btn" data-command="!!warn {User ID} <reason>"><i class="far fa-copy"></i></button></div>
+                            <div class="command-card modern-card p-4 flex justify-between items-center"><code class="text-gray-300">!!mute {User ID} {duration} &lt;reason&gt;</code><button class="copy-btn" data-command="!!mute {User ID} {duration} <reason>"><i class="far fa-copy"></i></button></div>
+                         </div>
+                    </div>
+                </div>
+                <div class="searchable">
+                    <h2 class="text-3xl font-bold mb-4 flex items-center gap-3" style="color: var(--admin-blue);"><i class="fa-solid fa-user-tie"></i>@admin Adds:</h2>
+                    <p class="mb-4 text-gray-400">Can see audit logs in server settings.</p>
+                    <div class="modern-card p-4 space-y-3">
+                        <div class="command-card modern-card p-4 flex justify-between items-center"><code class="text-gray-300">.close &lt;reason&gt; <span class="text-gray-500 text-sm ml-2">| closes the selected ModMail channel</span></code><button class="copy-btn" data-command=".close <reason>"><i class="far fa-copy"></i></button></div>
+                        <div class="command-card modern-card p-4 flex justify-between items-center"><code class="text-gray-300">!inf delete {infraction ID}</code><button class="copy-btn" data-command="!inf delete {infraction ID}"><i class="far fa-copy"></i></button></div>
+                        <div class="command-card modern-card p-4 flex justify-between items-center"><code class="text-gray-300">!ban {User ID} &lt;reason&gt;</code><button class="copy-btn" data-command="!ban {User ID} <reason>"><i class="far fa-copy"></i></button></div>
+                        <div class="command-card modern-card p-4 flex justify-between items-center"><code class="text-gray-300">!kick {User ID} &lt;reason&gt;</code><button class="copy-btn" data-command="!kick {User ID} <reason>"><i class="far fa-copy"></i></button></div>
+                        <div class="command-card modern-card p-4 flex justify-between items-center"><code class="text-gray-300">!softban {User ID} &lt;reason&gt; <span class="text-gray-500 text-sm ml-2">| kicks the user and deletes recent messages</span></code><button class="copy-btn" data-command="!softban {User ID} <reason>"><i class="far fa-copy"></i></button></div>
+                        <div class="command-card modern-card p-4 flex justify-between items-center"><code class="text-gray-300">!forceban {User ID} &lt;reason&gt; <span class="text-gray-500 text-sm ml-2">| bans a user not in the server</span></code><button class="copy-btn" data-command="!forceban {User ID} <reason>"><i class="far fa-copy"></i></button></div>
+                        <div class="command-card modern-card p-4 flex justify-between items-center"><code class="text-gray-300">!clean user {user} [messages count] <span class="text-gray-500 text-sm ml-2">| deletes user's messages in channel</span></code><button class="copy-btn" data-command="!clean user {user} [messages count]"><i class="far fa-copy"></i></button></div>
+                    </div>
+                </div>
+            </div>
+        `,
+        infractions: `
+             <header class="text-center py-12"><h1 class="text-4xl font-bold live-gradient-text" style="background-image: linear-gradient(45deg, #ef4444, #f97316, #eab308)">Infraction Guide</h1><p class="text-gray-400 max-w-2xl mx-auto mt-2">This is an example guide. If in doubt, discuss with a super admin.</p></header>
+             <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <div class="modern-card p-6 searchable">
+                    <h3 class="font-bold text-xl mb-3 text-yellow-400">🟠 Minor</h3><p class="text-sm text-gray-400 mb-4">Scales: Warn ➡️ 6h Mute ➡️ Kick ➡️ 2d Tempban ➡️ Ban<br><span class="text-xs italic">Doesn’t scale up after 4 weeks (unless same reason again)</span></p>
+                    <ul class="space-y-2 text-sm text-gray-300"><li>◈ Streaming Movies / Gambling / IRL weapons</li><li>◈ Ignoring Channel Rules</li><li>◈ Borderline conversations</li><li>◈ Borderline memes</li><li>◈ Annoying someone on purpose</li><li>◈ Starting Arguments In Chats</li><li>◈ Mild Spamming</li><li>◈ Begging For Free Stuff</li><li>◈ Buying/Selling Skins</li><li>◈ Using Better Discord</li><li>◈ Using an other language than english</li><li>◈ Mild toxicity</li></ul>
+                </div>
+                 <div class="modern-card p-6 searchable">
+                    <h3 class="font-bold text-xl mb-3 text-red-500">🔴 Medium</h3><p class="text-sm text-gray-400 mb-4">Scales: 2d Mute ➡️ 7d TempBan ➡️ Ban<br><span class="text-xs italic">Doesn’t scale up after 8 weeks (unless same reason again)</span></p>
+                    <ul class="space-y-2 text-sm text-gray-300"><li>◈ Streaming Minor NSFW / Drugs</li><li>◈ Promoting Gambling / drugs</li><li>◈ Trolling/Griefing</li><li>◈ Unwanted DMs that break a server rule</li><li>◈ Hate Speech/Heavy Toxicity</li><li>◈ Heavy spamming</li><li>◈ Earrape/Mic Spam/Heavy voice Changers</li><li>◈ Spam Joining VCs</li><li>◈ Advertising</li><li>◈ Trying to Buy or Sell Accounts</li></ul>
+                </div>
+                <div class="modern-card p-6 searchable">
+                    <h3 class="font-bold text-xl mb-3 text-purple-400">⛔ Major</h3><p class="text-sm text-gray-400 mb-4">Scales: 2d TempBan ➡️ Ban (Doesn't Scale Down)</p>
+                    <ul class="space-y-2 text-sm text-gray-300"><li>◈ Streaming/posting extreme NSFW/Gore 🔨⚠️</li><li>◈ Scamming 🔨⚠️</li><li>◈ Distribute/advertise cheats/hacks 🔨⚠️</li><li>◈ Cheating in game with members 🔨</li><li>◈ Showing Skin Changers</li><li>◈ Modifying Discord client to see hidden channels</li><li>◈ Mass DM Advertising from user 🔨</li><li>◈ Mass DM Advertising from bot 🔨⚠️</li><li>◈ Joining giveaways with multiple accounts</li><li>◈ Evading punishment with an alt 🔨</li><li>◈ Encouraging market manipulation</li></ul>
+                </div>
+                 <div class="modern-card p-6 searchable">
+                    <h3 class="font-bold text-xl mb-3 text-cyan-400">🔶 Unique Cases</h3>
+                    <ul class="space-y-3 text-sm text-gray-300"><li><strong>Compromised Accounts Sending Scam Links:</strong> Kick first. If joins back and still compromised: ban + appeal.</li><li><strong>VC Report Without Proof:</strong> Flagging.</li><li><strong>VC Report Without Proof But Accused Has Previous Record:</strong> Relevant Offense's Scaling.</li><li><strong>Joining with alt Account (non-major offense):</strong> Flag both accounts (alt of {id} --silent), ask user which to keep, ban the other. No roles transfer.</li></ul>
+                </div>
+             </div>
+             <div class="modern-card p-6 mt-8 searchable">
+                 <h3 class="font-bold text-xl mb-3 text-gray-300"><i class="fa-solid fa-user-tag mr-2"></i>Role Impact on Punishment</h3>
+                 <p class="text-gray-400">Depending on the infraction, special roles (Active Member, VIP, Donator+, etc.) get removed for a duration:</p>
+                 <ul class="mt-4 grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
+                    <li class="bg-primary p-3 rounded-lg"><strong>Minor mute:</strong><p>1 week removal</p></li>
+                    <li class="bg-primary p-3 rounded-lg"><strong>Mute:</strong><p>2 weeks removal</p></li>
+                    <li class="bg-primary p-3 rounded-lg"><strong>Kick:</strong><p>2 weeks removal</p></li>
+                    <li class="bg-primary p-3 rounded-lg"><strong>Tempban or unban with last chance:</strong><p>4 weeks removal</p></li>
+                 </ul>
+                 <p class="text-center text-sm text-gray-400 mt-4 italic">**Remember to state what could be the next punishment when issuing an infraction**<br>(*infraction reason* | Next offense might result in a mute/kick/ban)</p>
+             </div>
+        `
+    };
+
+    const scenarios = [
+        { text: "A user posts a borderline meme in #general-chat. This is their first offense.", options: [ {text: "Issue a `!warn` for 'Borderline memes'.", correct: true, feedback: "Correct. A simple warning is the standard first step for a Minor offense."}, {text: "Immediately `!tempmute` them for 6 hours.", correct: false, feedback: "Incorrect. Muting is the second step in the Minor punishment scale. A warning should come first."}, {text: "Delete the message and do nothing else.", correct: false, feedback: "Incorrect. While deleting the message is good, a formal warning is necessary to create a record of the infraction."} ] },
+        { text: "A user joins a voice channel and starts playing loud, distorted music (earrape). What's the best immediate action?", options: [ {text: "Warn the user and ask them to stop.", correct: false, feedback: "Incorrect. Earrape is a Medium offense and is highly disruptive. A warning is too lenient for an initial action."}, {text: "`!tempmute` them for a medium offense (e.g., 2 days).", correct: true, feedback: "Correct. Earrape is a Medium offense, and a 2-day mute is the appropriate first punishment according to the guide."}, {text: "Permanently ban them.", correct: false, feedback: "Incorrect. A permanent ban is too severe for a first-time Medium offense."} ] },
+        { text: "You receive a DM from a user with a screenshot of another user trying to sell them an account. What do you do?", options: [ {text: "Ignore it, as it happened in DMs.", correct: false, feedback: "Incorrect. Rules apply to DMs originating from the server. This is a Medium offense."}, {text: "Take action according to the guide.", correct: true, feedback: "Correct. According to the Medium infraction scale, a user trying to sell accounts is a punishable offense. The typical punishment scale would apply, starting with a mute."}, {text: "`!kick` the user from the server.", correct: false, feedback: "Incorrect. Kicking the user doesn't prevent them from rejoining and continuing the behavior. A more severe punishment is needed."} ] },
+        { text: "A user is spamming messages in chat. You've already warned them once this week for the same thing. What's the next step?", options: [ {text: "Warn them again.", correct: false, feedback: "Incorrect. They have already been warned. The punishment needs to escalate according to the Minor offense scale."}, {text: "Kick them from the server.", correct: false, feedback: "Incorrect. A kick is the third step. The second step is a temporary mute."}, {text: "`!tempmute` them for 6 hours for 'Mild Spamming'.", correct: true, feedback: "Correct! Following the Minor punishment scale, the next step after a warning is a 6-hour temporary mute."} ] },
+        { text: "Someone posts a link in chat to a site distributing cheats.", options: [ {text: "Delete the message and warn the user.", correct: false, feedback: "Incorrect. Distributing cheats is a Major offense and requires immediate, severe action."}, {text: "Immediately `!ban` the user for 'Distributing Cheats'.", correct: true, feedback: "Correct! This is a Major offense marked with a 🔨 (Direct Ban) symbol. There is no warning for this."}, {text: "`!tempmute` them for 2 days.", correct: false, feedback: "Incorrect. A temporary mute is not sufficient for an offense that threatens the integrity of the game and community."} ] },
+        { text: "A user evades a previous ban with a new account.", options: [ {text: "`!ban` the new account for 'Evading Punishment'.", correct: true, feedback: "Correct. Ban evasion is a Major offense (marked with 🔨) and the new account should be banned immediately."}, {text: "Let them stay, since it's a new account.", correct: false, feedback: "Incorrect. Allowing ban evaders undermines the entire punishment system."}, {text: "Warn the new account.", correct: false, feedback: "Incorrect. A warning is not applicable here; the user already knows the rules they broke."} ] },
+        { text: "You see two members starting a heated argument in chat over a game. It's becoming toxic.", options: [ {text: "`!tempmute` both users for 6 hours to cool off.", correct: true, feedback: "Correct. A short mute for both parties is a good way to de-escalate the situation, falling under 'Starting Arguments' or 'Mild Toxicity' (Minor)."}, {text: "Kick both users.", correct: false, feedback: "Incorrect. Kicking is too severe for a first-time argument unless it involves extreme language."}, {text: "Do nothing and let them sort it out.", correct: false, feedback: "Incorrect. It's a moderator's job to step in before arguments poison the chat."} ] },
+        { text: "A user sends you a DM with a link they received from another member, which leads to a scam website.", options: [ {text: "Tell them to report the user to Discord.", correct: false, feedback: "Incorrect. While they can do that, you should also take immediate action on the server."}, {text: "`!kick` the user who sent the link.", correct: true, feedback: "Correct. The 'Unique Cases' guide says to kick for compromised accounts sending scam links. If they rejoin and continue, it escalates to a ban."}, {text: "`!ban` the user who sent the link immediately.", correct: false, feedback: "Incorrect. The guide specifies a kick as the first action, giving the user a chance in case their account was genuinely compromised."} ] },
+        { text: "A user is repeatedly joining and leaving a voice channel to make the notification sound play over and over.", options: [ {text: "This is a Major offense, ban them.", correct: false, feedback: "Incorrect. While annoying, this falls under 'Spam Joining VCs', which is a Medium offense."}, {text: "Ask them to stop in chat.", correct: false, feedback: "Incorrect. This is disruptive behavior that requires a formal infraction, not just a verbal request."}, {text: "`!tempmute` them for 'Spam Joining VCs'.", correct: true, feedback: "Correct. This is a Medium offense, so a tempmute is the appropriate starting punishment."} ] },
+        { text: "A user is speaking a language other than English in a main channel, despite the rules.", options: [ {text: "Mute them immediately.", correct: false, feedback: "Incorrect. This is a Minor offense, and the first step should be a warning."}, {text: "`!warn` the user for 'Using an other language than english'.", correct: true, feedback: "Correct. This is a Minor offense. A warning is the proper first step to inform them of the rule."}, {text: "Ignore it, it's not a big deal.", correct: false, feedback: "Incorrect. Enforcing all rules consistently is important for a fair environment."} ] }
+    ];
+    let currentScenarioIndex = 0;
+    let completedScenarios = new Set();
+
+    const mainContainer = document.getElementById('main-container');
+    
+    window.showPage = (pageId) => {
+        mainContainer.innerHTML = `<div class="page active">${pageContent[pageId] || pageContent.home}</div>`;
+        document.querySelectorAll('.nav-link').forEach(link => { link.classList.toggle('active', link.dataset.page === pageId); });
+        document.getElementById('mobile-menu').classList.add('hidden');
+        addDynamicEventListeners();
+    };
+    
+    document.querySelectorAll('.nav-link').forEach(link => link.addEventListener('click', (e) => { e.preventDefault(); showPage(link.dataset.page); }));
+    document.getElementById('mobile-menu-button').addEventListener('click', () => document.getElementById('mobile-menu').classList.toggle('hidden'));
+
+    function updateProgressBar() {
+        const progress = (completedScenarios.size / scenarios.length) * 100;
+        const progressBar = document.getElementById('scenario-progress');
+        if (progressBar) {
+            progressBar.style.width = `${progress}%`;
+        }
+    }
+
+    function loadScenario(index) {
+        currentScenarioIndex = index;
+        const scenario = scenarios[index];
+        const container = document.getElementById('scenario-container');
+        const navContainer = document.getElementById('scenario-nav');
+
+        if (!container) return;
+
+        if (completedScenarios.size === scenarios.length) {
+            container.innerHTML = `<div class="text-center p-4"><h3 class="text-2xl font-bold text-green-400">Training Complete!</h3><p class="text-gray-400 mt-2">You've successfully reviewed all scenarios.</p><button id="restart-training-btn" class="mt-4 px-4 py-2 font-bold text-white bg-gradient-to-r from-[var(--gradient-start)] to-[var(--gradient-end)] rounded-md hover:opacity-90">Restart Training</button></div>`;
+            document.getElementById('restart-training-btn').addEventListener('click', () => {
+                completedScenarios.clear();
+                currentScenarioIndex = 0;
+                loadScenario(0);
+            });
+            if(navContainer) navContainer.innerHTML = '';
+            return;
+        }
+
+        let optionsHtml = scenario.options.map((opt, i) => `<button class="w-full text-left p-3 modern-card scenario-option" data-index="${i}">${opt.text}</button>`).join('');
+        container.innerHTML = `
+            <p id="scenario-text" class="font-medium">${scenario.text}</p>
+            <div id="scenario-options" class="space-y-3">${optionsHtml}</div>
+            <p id="scenario-feedback" class="text-sm pt-2 min-h-[40px]"></p>
+        `;
+        
+        if (navContainer) {
+            let navHtml = '';
+            for (let i = 0; i < scenarios.length; i++) {
+                const isCompleted = completedScenarios.has(i);
+                const isCurrent = i === currentScenarioIndex;
+                navHtml += `<button class="w-8 h-8 rounded-md flex items-center justify-center text-xs font-bold ${isCurrent ? 'bg-blue-600' : isCompleted ? 'bg-green-600' : 'bg-primary'}" data-nav-index="${i}">${i + 1}</button>`;
+            }
+            navContainer.innerHTML = navHtml;
+            document.querySelectorAll('[data-nav-index]').forEach(btn => {
+                btn.addEventListener('click', (e) => loadScenario(parseInt(e.currentTarget.dataset.navIndex)));
+            });
+        }
+        
+        addScenarioListeners();
+        updateProgressBar();
+    }
+    
+    function addScenarioListeners() {
+        const feedbackEl = document.getElementById('scenario-feedback');
+        document.querySelectorAll('.scenario-option').forEach(option => {
+            option.addEventListener('click', (e) => {
+                if (e.currentTarget.classList.contains('correct')) return;
+
+                const selectedIndex = e.currentTarget.dataset.index;
+                const selectedOption = scenarios[currentScenarioIndex].options[selectedIndex];
+                
+                document.querySelectorAll('.scenario-option').forEach(btn => btn.classList.remove('incorrect'));
+
+                if(selectedOption.correct) {
+                     document.querySelectorAll('.scenario-option').forEach(btn => {
+                        btn.disabled = true;
+                        if(btn.dataset.index === selectedIndex) btn.classList.add('correct');
+                     });
+                } else {
+                     e.currentTarget.classList.add('incorrect');
+                }
+                
+                feedbackEl.classList.remove('hidden');
+                feedbackEl.textContent = selectedOption.feedback;
+                feedbackEl.style.color = selectedOption.correct ? 'lightgreen' : 'lightcoral';
+                
+                if (selectedOption.correct) {
+                    completedScenarios.add(currentScenarioIndex);
+                    updateProgressBar();
+                    setTimeout(() => {
+                        if (completedScenarios.size === scenarios.length) {
+                            loadScenario(currentScenarioIndex);
+                        } else {
+                            let nextIndex = 0;
+                            while (completedScenarios.has(nextIndex)) {
+                                nextIndex = (nextIndex + 1) % scenarios.length;
+                            }
+                            loadScenario(nextIndex);
+                        }
+                    }, 3000);
+                }
+            });
+        });
+    }
+
+    const addDynamicEventListeners = () => {
+        document.querySelectorAll('.copy-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                navigator.clipboard.writeText(btn.dataset.command).then(() => {
+                    btn.innerHTML = '<i class="fa-solid fa-check text-green-400"></i>';
+                    setTimeout(() => { btn.innerHTML = '<i class="far fa-copy"></i>'; }, 1500);
+                });
+            });
+        });
+        if (document.getElementById('scenario-container')) {
+            loadScenario(currentScenarioIndex);
+        }
+    };
+
+    // --- Login Logic ---
+    document.getElementById('login-form').addEventListener('submit', (e) => {
+        e.preventDefault();
+        if (document.getElementById('username').value === 'staff' && document.getElementById('password').value === 'cs') {
+            const loginOverlay = document.getElementById('login-overlay');
+            loginOverlay.style.opacity = '0';
+            setTimeout(() => {
+                loginOverlay.style.display = 'none';
+                document.getElementById('main-content').style.opacity = '1';
+                document.getElementById('main-content').style.display = 'block';
+                showPage('home');
+            }, 500);
+        } else {
+            const loginCard = document.getElementById('login-card');
+            loginCard.animate([ { transform: 'translateX(0)' }, { transform: 'translateX(-10px)' }, { transform: 'translateX(10px)' }, { transform: 'translateX(0)' } ], { duration: 300, easing: 'ease-in-out' });
+            document.getElementById('login-error').classList.remove('hidden');
+        }
+    });
+});
+</script>
+</body>
+</html>
